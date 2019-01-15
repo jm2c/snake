@@ -27,5 +27,19 @@ var SnakeGame = (function () {
     }
     return SnakeGame;
 }());
+var dir;
+(function (dir) {
+    dir[dir["UP"] = 8] = "UP";
+    dir[dir["LEFT"] = 4] = "LEFT";
+    dir[dir["RIGHT"] = 6] = "RIGHT";
+    dir[dir["DOWN"] = 2] = "DOWN";
+})(dir || (dir = {}));
+var key;
+(function (key) {
+    key[key["UP"] = 38] = "UP";
+    key[key["LEFT"] = 37] = "LEFT";
+    key[key["RIGHT"] = 39] = "RIGHT";
+    key[key["DOWN"] = 40] = "DOWN";
+})(key || (key = {}));
 var game = new SnakeGame(400, 600);
 document.body.appendChild(game.canvas);
