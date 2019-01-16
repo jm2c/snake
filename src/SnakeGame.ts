@@ -36,16 +36,20 @@ class SnakeGame {
             const k = evt.keyCode;
             switch(k) {
                 case key.UP:
-                    this.snake.direction = dir.UP;
+                    if(this.snake.direction != dir.DOWN)
+                        this.snake.direction = dir.UP;
                     break;
                 case key.LEFT:
-                    this.snake.direction = dir.LEFT;
+                    if(this.snake.direction != dir.RIGHT)
+                        this.snake.direction = dir.LEFT;
                     break;
                 case key.RIGHT:
-                    this.snake.direction = dir.RIGHT;
+                    if(this.snake.direction != dir.LEFT)
+                        this.snake.direction = dir.RIGHT;
                     break;
                 case key.DOWN:
-                    this.snake.direction = dir.DOWN;
+                    if(this.snake.direction != dir.UP)
+                        this.snake.direction = dir.DOWN;
                     break;
             }
         });
@@ -56,7 +60,31 @@ class SnakeGame {
         this.snake.draw(this.ctx);
     }
 
+    gameOver(): void {
+        setTimeout(() => {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.fillStyle = 'white';
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText(
+                "Game Over",
+                this.canvas.width / 2,
+                this.canvas.height / 2
+            )
+            this.ctx.fillText(
+                'Score: ' + this.snake.score,
+                this.canvas.width / 2 + 20,
+                this.canvas.height / 2 + 20
+            )
+        }, 500);
+
+    }
+
     update(): void {
+        if(!this.snake.alive){
+            this.gameOver();
+            return;
+        }
+
         requestAnimationFrame(() => this.update());
         this.now = Date.now();
         this.delta = this.now - this.then;
