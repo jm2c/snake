@@ -7,7 +7,7 @@ var Body = (function () {
     }
     Body.prototype.draw = function (ctx) {
         ctx.fillStyle = 'white';
-        ctx.fillRect((this.x - 1) * this.size, (this.y - 1) * this.size, this.size, this.size);
+        ctx.fillRect((this.x - 1) * this.size + 1, (this.y - 1) * this.size + 1, this.size - 2, this.size - 2);
     };
     return Body;
 }());

@@ -12,10 +12,10 @@ class Body {
     draw(ctx: CanvasRenderingContext2D) :void {
         ctx.fillStyle = 'white';
         ctx.fillRect(
-            (this.x - 1)*this.size,
-            (this.y - 1)*this.size,
-            this.size,
-            this.size
+            (this.x - 1)*this.size + 1,
+            (this.y - 1)*this.size + 1,
+            this.size - 2,
+            this.size - 2
         );
     }
 }
