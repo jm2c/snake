@@ -3,6 +3,7 @@ class SnakeGame {
     ctx: CanvasRenderingContext2D;
     pixel: number;
     snake: Snake;
+    food: Food;
 
     fps: number;
     now: number;
@@ -21,9 +22,10 @@ class SnakeGame {
 
         const head = new Body(11, 16, this.pixel);
         this.snake = new Snake(head);
+        this.food = new Food(this.pixel);
         
         // Control FPS
-        this.fps = 8;
+        this.fps = 1;
         this.now = 0;
         this.then = Date.now();
         this.interval = 1000/this.fps;
@@ -51,6 +53,7 @@ class SnakeGame {
 
     draw(): void {
         this.snake.draw(this.ctx);
+        this.food.draw(this.ctx);
     }
 
     update(): void {

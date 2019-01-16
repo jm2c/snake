@@ -11,6 +11,18 @@ var Body = (function () {
     };
     return Body;
 }());
+var Food = (function () {
+    function Food(size) {
+        this.x = Math.round(19 * Math.random() + 1);
+        this.y = Math.round(29 * Math.random() + 1);
+        this.size = size / 2;
+    }
+    Food.prototype.draw = function (ctx) {
+        ctx.fillStyle = 'firebrick';
+        ctx.fillRect(this.size * (2 * this.x - 3 / 2), this.size * (2 * this.y - 3 / 2), this.size, this.size);
+    };
+    return Food;
+}());
 var Snake = (function () {
     function Snake(head) {
         this.body = new Array(head);
@@ -63,7 +75,8 @@ var SnakeGame = (function () {
         this.canvas.style.backgroundColor = 'black';
         var head = new Body(11, 16, this.pixel);
         this.snake = new Snake(head);
-        this.fps = 8;
+        this.food = new Food(this.pixel);
+        this.fps = 1;
         this.now = 0;
         this.then = Date.now();
         this.interval = 1000 / this.fps;
@@ -88,6 +101,7 @@ var SnakeGame = (function () {
     }
     SnakeGame.prototype.draw = function () {
         this.snake.draw(this.ctx);
+        this.food.draw(this.ctx);
     };
     SnakeGame.prototype.update = function () {
         var _this = this;
