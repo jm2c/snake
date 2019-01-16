@@ -1,15 +1,15 @@
 class SnakeGame {
     canvas: HTMLCanvasElement;
-    ctx: CanvasRenderingContext2D;
-    pixel: number;
-    snake: Snake;
-    food: Food;
+    ctx:    CanvasRenderingContext2D;
+    pixel:  number;
+    snake:  Snake;
+    food:   Food;
 
-    fps: number;
-    now: number;
-    then: number;
+    fps:      number;
+    now:      number;
+    then:     number;
     interval: number;
-    delta: number;
+    delta:    number;
 
     constructor(width: number) {
         // With this measurements we get a 20x30 grid
@@ -25,7 +25,7 @@ class SnakeGame {
         this.food = new Food(this.pixel);
         
         // Control FPS
-        this.fps = 1;
+        this.fps = 8;
         this.now = 0;
         this.then = Date.now();
         this.interval = 1000/this.fps;
@@ -52,8 +52,8 @@ class SnakeGame {
     }
 
     draw(): void {
-        this.snake.draw(this.ctx);
         this.food.draw(this.ctx);
+        this.snake.draw(this.ctx);
     }
 
     update(): void {
@@ -63,8 +63,15 @@ class SnakeGame {
         if(this.delta > this.interval){
             this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
             this.snake.update();
-            this.draw();
 
+            // Eat
+            const head = this.snake.body[0];
+            if(head.x == this.food.x && head.y == this.food.y){
+                this.snake.growth();
+                this.food.move(this.snake);
+            }
+
+            this.draw();
             this.then = this.now - (this.delta % this.interval);
         }
     }

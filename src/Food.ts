@@ -4,9 +4,23 @@ class Food {
     size: number;
 
     constructor(size: number) {
+        this.size = size / 2;
         this.x = Math.round(19*Math.random() + 1);
         this.y = Math.round(29*Math.random() + 1);
-        this.size = size / 2;
+    }
+
+    move(snake: Snake): void {
+        this.x = Math.round(19*Math.random() + 1);
+        this.y = Math.round(29*Math.random() + 1);
+
+        let badPosition = false;
+        for(let part of snake.body){
+            if(part.x == this.x && part.y == this.y){
+                badPosition = true;
+                break;
+            }
+        }
+        if(badPosition) this.move(snake);
     }
 
     draw(ctx: CanvasRenderingContext2D) :void {

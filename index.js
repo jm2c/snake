@@ -13,10 +13,24 @@ var Body = (function () {
 }());
 var Food = (function () {
     function Food(size) {
+        this.size = size / 2;
         this.x = Math.round(19 * Math.random() + 1);
         this.y = Math.round(29 * Math.random() + 1);
-        this.size = size / 2;
     }
+    Food.prototype.move = function (snake) {
+        this.x = Math.round(19 * Math.random() + 1);
+        this.y = Math.round(29 * Math.random() + 1);
+        var badPosition = false;
+        for (var _i = 0, _a = snake.body; _i < _a.length; _i++) {
+            var part = _a[_i];
+            if (part.x == this.x && part.y == this.y) {
+                badPosition = true;
+                break;
+            }
+        }
+        if (badPosition)
+            this.move(snake);
+    };
     Food.prototype.draw = function (ctx) {
         ctx.fillStyle = 'firebrick';
         ctx.fillRect(this.size * (2 * this.x - 3 / 2), this.size * (2 * this.y - 3 / 2), this.size, this.size);
@@ -28,12 +42,22 @@ var Snake = (function () {
         this.body = new Array(head);
         this.direction = dir.UP;
     }
+    Snake.prototype.growth = function () {
+        var head = this.body[0];
+        this.body.push(new Body(head.x, head.y, head.size));
+    };
     Snake.prototype.draw = function (ctx) {
         this.body.forEach(function (b) {
             b.draw(ctx);
         });
     };
     Snake.prototype.update = function () {
+        for (var i = this.body.length - 1; i >= 0; i--) {
+            if (!this.body[i - 1])
+                continue;
+            this.body[i].x = this.body[i - 1].x;
+            this.body[i].y = this.body[i - 1].y;
+        }
         var head = this.body[0];
         switch (this.direction) {
             case dir.UP:
@@ -76,7 +100,7 @@ var SnakeGame = (function () {
         var head = new Body(11, 16, this.pixel);
         this.snake = new Snake(head);
         this.food = new Food(this.pixel);
-        this.fps = 1;
+        this.fps = 8;
         this.now = 0;
         this.then = Date.now();
         this.interval = 1000 / this.fps;
@@ -100,8 +124,8 @@ var SnakeGame = (function () {
         });
     }
     SnakeGame.prototype.draw = function () {
-        this.snake.draw(this.ctx);
         this.food.draw(this.ctx);
+        this.snake.draw(this.ctx);
     };
     SnakeGame.prototype.update = function () {
         var _this = this;
@@ -111,6 +135,11 @@ var SnakeGame = (function () {
         if (this.delta > this.interval) {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.snake.update();
+            var head = this.snake.body[0];
+            if (head.x == this.food.x && head.y == this.food.y) {
+                this.snake.growth();
+                this.food.move(this.snake);
+            }
             this.draw();
             this.then = this.now - (this.delta % this.interval);
         }
