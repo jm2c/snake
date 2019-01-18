@@ -47,7 +47,6 @@ var Snake = (function () {
     Snake.prototype.growth = function () {
         var head = this.body[0];
         this.body.push(new Body(head.x, head.y, head.size));
-        console.log(this.score);
     };
     Snake.prototype.draw = function (ctx) {
         this.body.forEach(function (b) {
@@ -77,22 +76,15 @@ var Snake = (function () {
                 head.x++;
                 break;
         }
-        for (var _i = 0, _a = this.body; _i < _a.length; _i++) {
-            var b = _a[_i];
-            if (b == head)
-                continue;
-            if (head.x == b.x && head.y == b.y) {
-                this.alive = false;
-            }
-        }
-        if (head.x > 20 || head.x < 1 || head.y > 30 || head.y < 1) {
-            this.alive = false;
-        }
     };
     return Snake;
 }());
 var SnakeGame = (function () {
-    function SnakeGame(width) {
+    function SnakeGame(width, options) {
+        if (options === void 0) { options = {
+            boundries: true,
+            velocity: 8
+        }; }
         var _this = this;
         this.pixel = width / 20;
         this.canvas = document.createElement('canvas');
@@ -103,10 +95,10 @@ var SnakeGame = (function () {
         var head = new Body(11, 16, this.pixel);
         this.snake = new Snake(head);
         this.food = new Food(this.pixel);
-        this.fps = 8;
+        this.options = options;
         this.now = 0;
         this.then = Date.now();
-        this.interval = 1000 / this.fps;
+        this.interval = 1000 / this.options.velocity;
         this.delta = 0;
         document.addEventListener('keydown', function (evt) {
             var k = evt.keyCode;
@@ -140,9 +132,14 @@ var SnakeGame = (function () {
             _this.ctx.clearRect(0, 0, _this.canvas.width, _this.canvas.height);
             _this.ctx.fillStyle = 'white';
             _this.ctx.textAlign = 'center';
+            _this.ctx.font = "20pt Calibri";
             _this.ctx.fillText("Game Over", _this.canvas.width / 2, _this.canvas.height / 2);
-            _this.ctx.fillText('Score: ' + _this.snake.score, _this.canvas.width / 2 + 20, _this.canvas.height / 2 + 20);
-        }, 500);
+            _this.ctx.fillText('Score: ' + _this.snake.score, _this.canvas.width / 2, _this.canvas.height / 2 + 28);
+        }, 300);
+        document.addEventListener('keypress', function (evt) {
+            if (evt.code == "Space") {
+            }
+        });
     };
     SnakeGame.prototype.update = function () {
         var _this = this;
@@ -157,6 +154,29 @@ var SnakeGame = (function () {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.snake.update();
             var head = this.snake.body[0];
+            for (var _i = 0, _a = this.snake.body; _i < _a.length; _i++) {
+                var b = _a[_i];
+                if (b == head)
+                    continue;
+                if (head.x == b.x && head.y == b.y) {
+                    this.snake.alive = false;
+                }
+            }
+            if (this.options.boundries) {
+                if (head.x > 20 || head.x < 1 || head.y > 30 || head.y < 1) {
+                    this.snake.alive = false;
+                }
+            }
+            else {
+                if (head.x > 20)
+                    head.x = 1;
+                if (head.x < 1)
+                    head.x = 20;
+                if (head.y > 30)
+                    head.y = 1;
+                if (head.y < 1)
+                    head.y = 30;
+            }
             if (head.x == this.food.x && head.y == this.food.y) {
                 this.snake.growth();
                 this.food.move(this.snake);
@@ -184,6 +204,9 @@ var key;
     key[key["RIGHT"] = 39] = "RIGHT";
     key[key["DOWN"] = 40] = "DOWN";
 })(key || (key = {}));
-var game = new SnakeGame(400);
+var game = new SnakeGame(400, {
+    boundries: true,
+    velocity: 8
+});
 document.body.appendChild(game.canvas);
 game.start();

@@ -4,14 +4,17 @@ class SnakeGame {
     pixel:  number;
     snake:  Snake;
     food:   Food;
+    options: Options;
 
-    fps:      number;
     now:      number;
     then:     number;
     interval: number;
     delta:    number;
 
-    constructor(width: number) {
+    constructor(width: number, options={
+        boundries: true,
+        velocity: 8
+    }) {
         // With this measurements we get a 20x30 grid
         this.pixel = width / 20;
         this.canvas = document.createElement('canvas');
@@ -23,12 +26,12 @@ class SnakeGame {
         const head = new Body(11, 16, this.pixel);
         this.snake = new Snake(head);
         this.food = new Food(this.pixel);
+        this.options = options;
         
         // Control FPS
-        this.fps = 8;
         this.now = 0;
         this.then = Date.now();
-        this.interval = 1000/this.fps;
+        this.interval = 1000/this.options.velocity;
         this.delta = 0;
 
         // Controllers
@@ -65,6 +68,7 @@ class SnakeGame {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.ctx.fillStyle = 'white';
             this.ctx.textAlign = 'center';
+            this.ctx.font = "20pt Calibri";
             this.ctx.fillText(
                 "Game Over",
                 this.canvas.width / 2,
@@ -72,10 +76,17 @@ class SnakeGame {
             )
             this.ctx.fillText(
                 'Score: ' + this.snake.score,
-                this.canvas.width / 2 + 20,
-                this.canvas.height / 2 + 20
+                this.canvas.width / 2,
+                this.canvas.height / 2 + 28
             )
-        }, 500);
+        }, 300);
+
+        document.addEventListener('keypress', evt => {
+            if( evt.code == "Space" ){
+                
+            }
+            
+        })
 
     }
 
@@ -92,8 +103,26 @@ class SnakeGame {
             this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
             this.snake.update();
 
-            // Eat
+            // Collide
             const head = this.snake.body[0];
+            for(let b of this.snake.body) {
+                if(b == head) continue;
+                if(head.x == b.x && head.y == b.y) {
+                    this.snake.alive = false;
+                }
+            }
+            if(this.options.boundries){
+                if(head.x > 20 || head.x < 1 || head.y > 30 || head.y < 1){
+                    this.snake.alive = false;
+                }
+            }else{
+                if(head.x > 20) head.x = 1;
+                if(head.x < 1)  head.x = 20;
+                if(head.y > 30) head.y = 1;
+                if(head.y < 1)  head.y = 30;
+            }
+
+            // Eat
             if(head.x == this.food.x && head.y == this.food.y){
                 this.snake.growth();
                 this.food.move(this.snake);

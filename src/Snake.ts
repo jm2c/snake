@@ -19,7 +19,6 @@ class Snake {
         this.body.push(
             new Body(head.x, head.y, head.size)
         );
-        console.log(this.score);
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
@@ -52,15 +51,5 @@ class Snake {
                 break;
         }
 
-        for(let b of this.body) {
-            if(b == head) continue;
-            if(head.x == b.x && head.y == b.y) {
-                this.alive = false;
-            }
-        }
-
-        if(head.x > 20 || head.x < 1 || head.y > 30 || head.y < 1){
-            this.alive = false;
-        }
     }
 }
