@@ -96,6 +96,7 @@ var SnakeGame = (function () {
         this.snake = new Snake(head);
         this.food = new Food(this.pixel);
         this.options = options;
+        this.playing = false;
         this.now = 0;
         this.then = Date.now();
         this.interval = 1000 / this.options.velocity;
@@ -132,12 +133,18 @@ var SnakeGame = (function () {
             _this.ctx.clearRect(0, 0, _this.canvas.width, _this.canvas.height);
             _this.ctx.fillStyle = 'white';
             _this.ctx.textAlign = 'center';
-            _this.ctx.font = "20pt Calibri";
-            _this.ctx.fillText("Game Over", _this.canvas.width / 2, _this.canvas.height / 2);
-            _this.ctx.fillText('Score: ' + _this.snake.score, _this.canvas.width / 2, _this.canvas.height / 2 + 28);
+            _this.ctx.font = "bold 25pt Monospace";
+            _this.ctx.fillText("Game Over", _this.canvas.width / 2, _this.canvas.height / 2 - 30);
+            _this.ctx.font = "20pt Monospace";
+            _this.ctx.fillText('Score: ' + _this.snake.score, _this.canvas.width / 2, _this.canvas.height / 2);
+            _this.ctx.fillText('Press <R> to retry.', _this.canvas.width / 2, _this.canvas.height / 2 + 48);
         }, 300);
         document.addEventListener('keypress', function (evt) {
-            if (evt.code == "Space") {
+            if (!_this.playing && evt.code === "KeyR") {
+                var head = new Body(11, 16, _this.pixel);
+                _this.snake = new Snake(head);
+                _this.food = new Food(_this.pixel);
+                _this.start();
             }
         });
     };
@@ -145,6 +152,7 @@ var SnakeGame = (function () {
         var _this = this;
         if (!this.snake.alive) {
             this.gameOver();
+            this.playing = false;
             return;
         }
         requestAnimationFrame(function () { return _this.update(); });
@@ -186,7 +194,20 @@ var SnakeGame = (function () {
         }
     };
     SnakeGame.prototype.start = function () {
-        this.update();
+        var _this = this;
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillStyle = 'white';
+        this.ctx.textAlign = 'center';
+        this.ctx.font = "bold 25pt Monospace";
+        this.ctx.fillText("Snake", this.canvas.width / 2, this.canvas.height / 2 - 30);
+        this.ctx.font = "20pt Monospace";
+        this.ctx.fillText("<spacebar> to start.", this.canvas.width / 2, this.canvas.height / 2 + 20);
+        document.addEventListener('keypress', function (evt) {
+            if (evt.charCode === 32) {
+                _this.playing = true;
+                _this.update();
+            }
+        });
     };
     return SnakeGame;
 }());

@@ -5,6 +5,7 @@ class SnakeGame {
     snake:  Snake;
     food:   Food;
     options: Options;
+    playing: boolean;
 
     now:      number;
     then:     number;
@@ -27,6 +28,7 @@ class SnakeGame {
         this.snake = new Snake(head);
         this.food = new Food(this.pixel);
         this.options = options;
+        this.playing = false;
         
         // Control FPS
         this.now = 0;
@@ -68,24 +70,34 @@ class SnakeGame {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.ctx.fillStyle = 'white';
             this.ctx.textAlign = 'center';
-            this.ctx.font = "20pt Calibri";
+            this.ctx.font = "bold 25pt Monospace";
+            
             this.ctx.fillText(
                 "Game Over",
                 this.canvas.width / 2,
-                this.canvas.height / 2
-            )
+                this.canvas.height / 2 - 30
+            );
+
+            this.ctx.font = "20pt Monospace";
             this.ctx.fillText(
                 'Score: ' + this.snake.score,
                 this.canvas.width / 2,
-                this.canvas.height / 2 + 28
+                this.canvas.height / 2
+            );
+            this.ctx.fillText(
+                'Press <R> to retry.',
+                this.canvas.width / 2,
+                this.canvas.height / 2 + 48
             )
         }, 300);
 
         document.addEventListener('keypress', evt => {
-            if( evt.code == "Space" ){
-                
+            if( !this.playing && evt.code === "KeyR" ) {
+                const head = new Body(11, 16, this.pixel);
+                this.snake = new Snake(head);
+                this.food = new Food(this.pixel);
+                this.start();
             }
-            
         })
 
     }
@@ -93,6 +105,7 @@ class SnakeGame {
     update(): void {
         if(!this.snake.alive){
             this.gameOver();
+            this.playing = false;
             return;
         }
 
@@ -134,7 +147,29 @@ class SnakeGame {
     }
 
     start(): void {
-        this.update();
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillStyle = 'white';
+        this.ctx.textAlign = 'center';
+        this.ctx.font = "bold 25pt Monospace";
+        this.ctx.fillText(
+            "Snake",
+            this.canvas.width / 2,
+            this.canvas.height / 2 - 30
+        );
+
+        this.ctx.font = "20pt Monospace";
+        this.ctx.fillText(
+            "<spacebar> to start.",
+            this.canvas.width / 2,
+            this.canvas.height / 2 + 20
+        );
+
+        document.addEventListener('keypress', evt => {
+            if(evt.charCode === 32) {
+                this.playing = true;
+                this.update();
+            }
+        });
     }
     
 }
