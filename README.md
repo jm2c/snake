@@ -1,4 +1,4 @@
 # snake
 The snake game in TypeScript
 
-[Pruébalo](https://jm2c.github.io/snake/)
+[Try it!](https://jm2c.github.io/snake/)
